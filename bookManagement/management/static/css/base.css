@@ -1,0 +1,14 @@
+body{
+    padding-top: 50px;
+    background-color: #fef9eb;
+}
+
+#header-base{
+    background-color: #556B2F;
+    color: #ffffff;
+}
+
+#base_name{
+    color: #00FF7F;
+    font-weight: bold;
+}
