@@ -23,7 +23,7 @@
                 {% endif %}
                 {% if state == 'success' %}
                     <h2 class="text-success text-center">注册成功！</h2>
-                {% elif state == 'reapet_error' %}
+                {% elif state == 'repeat_error' %}
                     <h2 class="text-warning text-center">密码重复错误！</h2>
                 {% elif state == 'empty' %}
                     <h2 class="text-warning text-center">密码不能为空！</h2>
@@ -32,7 +32,7 @@
                 {% elif state == 'out_of_range' %}
                     <h2 class="text-danger text-center">密码不能超过12位！</h2>
                 {% elif state == 'grammar_error' %}
-                    <h2 class="text-danger text-center">密码不能含_/,\;#</h2>
+                    <h2 class="text-danger text-center">密码不能以_/,\;#开头且不能全由特殊字符组成</h2>
                 {% endif %}
                 {% if state %}
                     </div>

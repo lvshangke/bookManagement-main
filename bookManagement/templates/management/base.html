@@ -6,12 +6,26 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-    <meta charset="UTF-8">
+   <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+     <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- 加载 FontAwesome CSS 文件 -->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-S2OwaF1b95USDDok1pviPg//2HsB//FKg0gNpk+1aCA7Iy/5IyWq70OoFF4kY8P/7cb7PEhfnSw2JbVSl2hovg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
+
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-S2OwaF1b95USDDok1pviPg//2HsB//FKg0gNpk+1aCA7Iy/5IyWq70OoFF4kY8P/7cb7PEhfnSw2JbVSl2hovg==" crossorigin="anonymous" referrerpolicy="no-referrer" />-->
+
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">-->
+
+    <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <!--[if lt IE 9]>
@@ -38,6 +52,7 @@
                         {% if user.is_staff %}
                             <li id="add_book"><a href="{% url 'add_book' %}">添加图书</a></li>
                             <li id="add_img"><a href="{% url 'add_img' %}">添加图片</a></li>
+                            <li id="add_intro"><a href="{% url 'add_intro' %}">添加简介</a></li>
                         {% endif %}
                         <li id="view_book"><a href="{% url 'book_list' 'all' %}">查看图书</a></li>
                     {% endif %}
@@ -77,6 +92,7 @@
 <script type="text/javascript">
     $('#{{ active_menu }}').addClass('active');
 </script>
+
 </body>
 <!--<script type="text/javascript" charset="utf-8" async=""-->
 <!--        src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>-->

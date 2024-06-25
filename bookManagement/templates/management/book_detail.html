@@ -8,13 +8,13 @@
                 <div class="col-md-5">
                     {% if book.image_set.all%}
                         <div id="carousel-generic" class="carousel slide" data-ride="carousel">
-                            <ol class="carousel-indicators">
-                                {% for img in book.image_set.all %}
-                                    <li data-target="#carousel-generic" data-slide-to="'{{ forloop.counter0 }}">
-                                    {% if forloop.first %} class="active"{% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ol>
+<!--                            <ol class="carousel-indicators">-->
+<!--                                {% for img in book.image_set.all %}-->
+<!--                                    <li data-target="#carousel-generic" data-slide-to="'{{ forloop.counter0 }}">-->
+<!--                                    {% if forloop.first %} class="active"{% endif %}-->
+<!--                                    </li>-->
+<!--                                {% endfor %}-->
+<!--                            </ol>-->
                             <div class="carousel-inner" role="listbox">
                                 {% for img in book.image_set.all %}
                                     <div {% if forloop.first %} class="item active" {% else %} class="item"{% endif %}>
@@ -29,6 +29,9 @@
                     {% else %}
                         <p class="text-center">暂无图片</p>
                     {% endif%}
+                    <hr>
+                    <!-- 添加评论按钮 -->
+                    <a href="{% url 'view_comments' book.id %}" class="btn btn-primary">查看评论</a>
                 </div>
                 <div class="col-md-6 col-md-offset-1">
                     <h2 class="text-center">{{ book.name }}</h2>
@@ -37,6 +40,28 @@
                     <h3>类别: {{ book.category }}</h3>
                     <h3>出版日期: {{ book.publish_date|date:"Y-m-d" }}</h3>
                     <h3>价格: {{ book.price|floatformat:2 }}</h3>
+                    <hr>
+<!--                    <h3>简介:</h3>-->
+<!--                    <p>{{ book_description.description }}</p>-->
+                     <h3>简介:</h3>
+                    {% if book_introduction %}
+                        <p>{{ book_introduction.introduction }}</p>
+                    {% else %}
+                        <p>暂无简介</p>
+                    {% endif %}
+                    <hr>
+                     <!-- 显示推荐指数 -->
+                    <h3>推荐指数：</h3>
+                    <div class="fixed-rating">
+                        {% for star in "12345" %}
+                            {% if average_rating >= star|add:0 %}
+                                <span class="fa fa-star" style="color:orange;"></span>
+                            {% else %}
+                                <span class="fa fa-star" style="color:grey;"></span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p>{{ average_rating|floatformat:1 }} / 5.0</p>
                 </div>
             </div>
         </div>

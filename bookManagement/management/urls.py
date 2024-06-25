@@ -18,7 +18,9 @@ urlpatterns = [
     path('add_book/', views.add_book, name='add_book'),
     path('add_img/', views.add_img, name='add_img'),
     path('log/', views.log, name='log'),
+    path('add_intro/',views.add_intro,name='add_intro'),
     # /<路径转换>/
     path('book_list/<str:category>/', views.book_list, name='book_list'),
+    path('book_detail/<int:book_id>/comments/', views.view_comments, name='view_comments'),
     re_path(r'^book_detail/(?P<book_id>[0-9]+)/$', views.book_detail, name='book_detail'),
 ]

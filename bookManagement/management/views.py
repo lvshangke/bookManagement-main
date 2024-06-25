@@ -1,11 +1,13 @@
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse,redirect
 from django.http import HttpResponseRedirect
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Book, Image
+from .models import Book, Image,Intro,Comment
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import re
+from django.db.models import Avg
 
 # Create your views here.
 '''
@@ -40,7 +42,7 @@ def sign_up(request):
         password = request.POST.get('password', '')
         repeat_password = request.POST.get('repeat_password', '')
 
-        ret = re.match("(?!^\\d+$)(?!^[a-zA-Z]+$)(?!^[_#@]+$)(?!^[_/,\;#]).{8,12}", password)
+        ret = re.match("(?!^[_#@]+$)(?!^[_/,\;#]).{8,12}", password)
 
         if password == '' or repeat_password == '':
             state = 'empty'
@@ -119,7 +121,7 @@ def change_password(request):
         new_password = request.POST.get('new_password', '')
         repeat_password = request.POST.get('repeat_password', '')
 
-        ret = re.match("(?!^\\d+$)(?!^[a-zA-Z]+$)(?!^[_#@]+$)(?!^[_/,\;#]).{8,12}", new_password)
+        ret = re.match("(?!^[_#@]+$)(?!^[_/,\;#]).{8,12}", new_password)
 
         if user.check_password(old_password):
             if not new_password:
@@ -203,6 +205,33 @@ def add_img(request):
     }
     return render(request, 'management/add_img.html', context)
 
+@user_passes_test(lambda u: u.is_staff)
+def add_intro(request):
+    user = request.user
+    state = None
+    if request.method == 'POST':
+        book = Book.objects.get(pk=request.POST.get('book', ''))
+        Intro.objects.filter(book=book).delete()
+        try:
+            new_intro = Intro(
+                introduction=request.POST.get('introduction', ''),
+                #img=request.FILES.get('img', ''), # 上传的文件被保存在FILES中
+                book=book
+            )
+            new_intro.save()
+        except Book.DoesNotExist as e:
+            state = 'error'
+            print(e)
+        else:
+            state = 'success'
+    context = {
+        'user': user,
+        'state': state,
+        'book_list': Book.objects.all(),
+        'active_menu': 'add_intro',
+    }
+    return render(request, 'management/add_intro.html', context)
+
 
 '''
 图书列表：
@@ -240,17 +269,48 @@ def book_list(request, category='all'):
 @login_required
 def book_detail(request, book_id=1):
     user = request.user
+    #average_rating = comments.aggregate(Avg('rating'))['rating__avg'] or 0  # 计算平均评分
     try:
         book = Book.objects.get(pk=book_id) # 根据id返回书籍信息
+
+
     except Book.DoesNotExist:
         return HttpResponseRedirect(reverse('book_list', args=('all', )))
+
+    try:
+        book_introduction = Intro.objects.get(book=book)
+    except Intro.DoesNotExist:
+        book_introduction = None
+
+    try:
+        comments = Comment.objects.filter(book=book)
+        average_rating = comments.aggregate(Avg('rating'))['rating__avg'] or 0  # 计算平均评分
+    except Comment.DoesNotExist:
+        average_rating=None
     context ={
         'user': user,
         'active_menu': 'view_book',
         'book': book,
+        'average_rating': average_rating,
+        'book_introduction':book_introduction
+
     }
     return render(request, 'management/book_detail.html', context)
 
+@login_required
+def view_comments(request, book_id):
+    book = Book.objects.get(pk=book_id)
+    comments = Comment.objects.filter(book=book)
+    average_rating = comments.aggregate(Avg('rating'))['rating__avg'] or 0  # Calculate the average rating
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        rating = request.POST.get('rating')
+        if content:
+            new_comment = Comment.objects.create(book=book, user=request.user,content=content, rating=rating, created_at=timezone.now())
+            # 可以根据需要进行其他操作，例如重定向或刷新评论列表
+            return redirect('view_comments', book_id=book_id)
+    return render(request, 'management/view_comments.html', {'book': book, 'comments': comments,'average_rating': average_rating,})
 
 #--------------------------------------------------------------------------------------------------
 # 杂项
